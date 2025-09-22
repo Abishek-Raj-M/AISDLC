@@ -1,0 +1,76 @@
+## User Stories for Simple Digital Bookstore
+
+### Epic 1: Book Management
+**US001: View Available Books**
+- As a customer, I want to view a list of available books so that I can browse and select books to purchase.
+- Acceptance Criteria:
+  - Display book title, author, price, and availability status
+  - Show book cover image if available
+  - Support pagination for large book catalogs
+
+**US002: Search Books**
+- As a customer, I want to search for books by title or author so that I can quickly find specific books.
+- Acceptance Criteria:
+  - Provide search functionality by book title
+  - Provide search functionality by author name
+  - Display relevant search results
+
+**US003: View Book Details**
+- As a customer, I want to view detailed information about a book so that I can make an informed purchase decision.
+- Acceptance Criteria:
+  - Display book description, ISBN, publication date
+  - Show customer reviews and ratings
+  - Display current stock availability
+
+### Epic 2: Shopping Cart Management
+**US004: Add Books to Cart**
+- As a customer, I want to add books to my shopping cart so that I can purchase multiple books together.
+- Acceptance Criteria:
+  - Add selected books to shopping cart
+  - Update cart quantity for existing items
+  - Display cart item count
+
+**US005: View Shopping Cart**
+- As a customer, I want to view my shopping cart so that I can review my selected books before checkout.
+- Acceptance Criteria:
+  - Display all items in cart with quantities and prices
+  - Show total cart value
+  - Allow quantity updates and item removal
+
+**US006: Remove Items from Cart**
+- As a customer, I want to remove items from my cart so that I can manage my purchases.
+- Acceptance Criteria:
+  - Remove individual items from cart
+  - Update cart total after removal
+  - Confirm removal action
+
+### Epic 3: Order Processing
+**US007: Place Order**
+- As a customer, I want to place an order for books in my cart so that I can complete my purchase.
+- Acceptance Criteria:
+  - Collect customer information (name, address, email)
+  - Process order and generate order confirmation
+  - Clear shopping cart after successful order
+
+**US008: View Order History**
+- As a customer, I want to view my order history so that I can track my past purchases.
+- Acceptance Criteria:
+  - Display list of previous orders with dates
+  - Show order details including books purchased
+  - Display order status
+
+### Epic 4: Admin Functions
+**US009: Manage Book Inventory**
+- As an admin, I want to manage book inventory so that I can add, update, or remove books from the catalog.
+- Acceptance Criteria:
+  - Add new books to inventory
+  - Update existing book information
+  - Remove books from catalog
+  - Update stock quantities
+
+**US010: View Sales Reports**
+- As an admin, I want to view sales reports so that I can track business performance.
+- Acceptance Criteria:
+  - Display total sales by date range
+  - Show best-selling books
+  - Generate basic analytics
