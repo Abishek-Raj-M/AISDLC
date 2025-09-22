@@ -1,0 +1,90 @@
+Requirement Specification Document: Simple Digital Bookstore
+1. Introduction
+1.1. Purpose
+This document outlines the detailed functional and non-functional requirements for the Simple Digital Bookstore, a web application designed to demonstrate a basic e-commerce transaction flow. The primary purpose is to provide a self-contained, lightweight, and single-file web application that can be used as a test case for an automated software development and deployment pipeline.
+1.2. Scope
+The application's scope is strictly limited to the following:
+* Displaying a fixed catalog of two digital books.
+* Enabling users to add books to a shopping cart.
+* Providing a simplified checkout form for cash-on-delivery orders.
+* Generating and displaying a unique Order ID upon successful order placement.
+* Storing order data in a persistent format on the server-side.
+This project explicitly excludes user authentication, real-time payment processing, a backend administration panel, or any dynamic product management features.
+1.3. Target Audience
+The primary users of this document are the development, testing, and DevOps agents responsible for implementing, verifying, and deploying the application.
+
+2. Functional Requirements
+2.1. Product Catalog Management
+* FR-2.1.1: Fixed Catalog: The application shall have a pre-defined, non-editable catalog of two (2) digital books.
+* FR-2.1.2: Product Display: Each book shall be displayed with the following attributes:
+o title: The full title of the book (string).
+o author: The author's name (string).
+o imageUrl: A URL to a high-resolution image of the book cover (string).
+o description: A concise summary of the book (string).
+o price: The price of the book in United States Dollars ($), represented as a floating-point number.
+2.2. Shopping Cart Functionality
+* FR-2.2.1: Add to Cart: A clearly labeled "Add to Cart" button shall be present on each product display. Clicking this button will add a single instance of the associated book to the shopping cart.
+* FR-2.2.2: Cart State Persistence: The contents of the shopping cart shall be stored in localStorage on the client-side, persisting throughout the user's session.
+* FR-2.2.3: Cart Summary: A visual summary of the cart (e.g., a cart icon with an item count) shall be displayed prominently on every page.
+* FR-2.2.4: Cart View: A dedicated cart page or modal shall display a list of items currently in the cart, along with their quantities and a calculated total price.
+* FR-2.2.5: Item Removal: The user shall have the ability to remove an item from the cart.
+* FR-2.2.6: Quantity Adjustment: The user shall be able to increase or decrease the quantity of an item in the cart.
+2.3. Checkout Process
+* FR-2.3.1: Cart Validation: The checkout process shall only be accessible if the shopping cart is not empty. If the cart is empty, the user shall receive a feedback message and be redirected to the product catalog.
+* FR-2.3.2: User Information Form: The checkout page shall present a form with the following required fields for the customer's cash-on-delivery order:
+o fullName: A text input for the customer's full name.
+o shippingAddress: A text area for the customer's shipping address.
+o phoneNumber: A text input for the customer's phone number.
+* FR-2.3.3: Form Validation: The frontend must validate that all required fields are non-empty before allowing form submission. An appropriate error message shall be displayed to the user for any empty fields.
+2.4. Order Placement & Confirmation
+* FR-2.4.1: Order Submission: A "Place Order" button shall be available on the checkout form. Clicking this button will trigger a POST request to the backend API.
+* FR-2.4.2: Order ID Generation: The backend API shall generate a unique and non-sequential orderId for each new order. The format of the ID must be a string (e.g., ORD-XXXXXXXX).
+* FR-2.4.3: Order Data Storage: The backend API shall store the following data for each order in a persistent data store:
+o orderId (string)
+o items (array of objects, each with title and quantity)
+o totalPrice (number)
+o customerInfo (object containing fullName, shippingAddress, and phoneNumber)
+* FR-2.4.4: Confirmation Display: Upon successful order submission, the user shall be redirected to a new page or a modal shall appear, displaying a confirmation message and the unique orderId.
+
+3. Non-Functional Requirements
+3.1. Usability & User Experience
+* NFR-3.1.1: Clear Feedback: The application must provide immediate and clear feedback to the user for every action (e.g., "Item added to cart!", "Order placed successfully!").
+* NFR-3.1.2: Intuitive Navigation: The flow from product selection to checkout must be intuitive, with clear and accessible buttons and navigation elements.
+* NFR-3.1.3: Visual Design: The application shall have a clean, minimalist design with a focus on readability and a pleasant user experience.
+3.2. Performance
+* NFR-3.2.1: Page Load Time: The initial page load time on a standard desktop browser should not exceed 3 seconds.
+* NFR-3.2.2: API Response Time: The API response for order submission shall be returned to the client within 2 seconds.
+3.3. Reliability & Data Integrity
+* NFR-3.3.1: Data Persistence: The order data stored in the backend must be durable and resistant to server restarts.
+* NFR-3.3.2: Error Handling: The application shall handle backend errors gracefully, displaying a user-friendly message (e.g., "Something went wrong. Please try again.") instead of a technical error code.
+
+4. Technical Specifications
+4.1. Frontend
+* Platform: The application must be delivered as a single HTML file. All HTML, CSS, and JavaScript must be contained within this file.
+* Libraries: Standard, lightweight libraries (e.g., Tailwind CSS via CDN) are acceptable for styling. The use of complex frameworks is not required but may be implemented if it contributes to the single-file nature.
+* Client-Side State: The shopping cart state shall be managed using the browser's localStorage API.
+4.2. Backend
+* API: A simple RESTful API is required. Use SpringBoot library.
+* Endpoints:
+o GET /api/products: Returns a JSON array of the two fixed book products.
+o POST /api/orders: Accepts a JSON payload containing the customer and cart details. It will store the order and return a JSON object with the generated orderId.
+o Payload: The POST request to /api/orders shall have the following JSON structure:
+JSON
+{
+  "items": [
+    { "title": "...", "quantity": 1 },
+    { "title": "...", "quantity": 1 }
+  ],
+  "customerInfo": {
+    "fullName": "...",
+    "shippingAddress": "...",
+    "phoneNumber": "..."
+  }
+}
+o Response: Upon success, the API shall respond with a 201 Created status code and the following JSON object:
+JSON
+{
+  "orderId": "ORD-123456",
+  "message": "Order placed successfully."
+}
+* Database: A simple JSON file or a similar file-based persistence mechanism will be used to store order data on the server. No complex database setup is required.

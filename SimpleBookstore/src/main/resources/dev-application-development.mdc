@@ -1,0 +1,183 @@
+# Application Development Plan - Simple Digital Bookstore
+
+## Technology Stack
+- **Backend**: Spring Boot (Java)
+- **Frontend**: HTML, CSS, JavaScript
+- **Database**: H2 (in-memory for simplicity)
+- **Build Tool**: Maven
+
+## Project Structure
+```
+src/
+├── main/
+│   ├── java/
+│   │   └── com/bookstore/
+│   │       ├── SimpleBookstoreApplication.java
+│   │       ├── controller/
+│   │       │   ├── BookController.java
+│   │       │   ├── CartController.java
+│   │       │   └── OrderController.java
+│   │       ├── model/
+│   │       │   ├── Book.java
+│   │       │   ├── CartItem.java
+│   │       │   └── Order.java
+│   │       ├── repository/
+│   │       │   ├── BookRepository.java
+│   │       │   └── OrderRepository.java
+│   │       └── service/
+│   │           ├── BookService.java
+│   │           ├── CartService.java
+│   │           └── OrderService.java
+│   └── resources/
+│       ├── static/
+│       │   ├── css/
+│       │   │   └── style.css
+│       │   ├── js/
+│       │   │   └── bookstore.js
+│       │   └── index.html
+│       └── application.properties
+└── test/
+    └── java/
+```
+
+## Backend Development (Spring Boot)
+
+### 1. Entity Models
+- **Book**: id, title, author, isbn, price, description, stockQuantity
+- **CartItem**: id, bookId, quantity, sessionId
+- **Order**: id, customerName, customerEmail, customerAddress, orderDate, totalAmount, status
+
+### 2. Repository Layer
+- BookRepository: CRUD operations for books
+- OrderRepository: CRUD operations for orders
+- Use Spring Data JPA for database operations
+
+### 3. Service Layer
+- BookService: Business logic for book management
+- CartService: Shopping cart operations (session-based)
+- OrderService: Order processing and management
+
+### 4. Controller Layer (REST APIs)
+- **BookController**:
+  - GET /api/books - List all books
+  - GET /api/books/{id} - Get book details
+  - GET /api/books/search?query={query} - Search books
+  - POST /api/books - Add new book (admin)
+  - PUT /api/books/{id} - Update book (admin)
+  - DELETE /api/books/{id} - Delete book (admin)
+
+- **CartController**:
+  - GET /api/cart - Get cart items
+  - POST /api/cart - Add item to cart
+  - PUT /api/cart/{itemId} - Update cart item quantity
+  - DELETE /api/cart/{itemId} - Remove item from cart
+  - DELETE /api/cart - Clear cart
+
+- **OrderController**:
+  - POST /api/orders - Place order
+  - GET /api/orders - Get order history
+  - GET /api/orders/{id} - Get order details
+
+## Frontend Development (HTML/CSS/JavaScript)
+
+### 1. Main Pages
+- **index.html**: Homepage with book listing and search
+- **book-details.html**: Individual book details page
+- **cart.html**: Shopping cart page
+- **checkout.html**: Order placement page
+- **admin.html**: Admin panel for book management
+
+### 2. CSS Styling (style.css)
+- Responsive design
+- Clean, modern interface
+- Card-based layout for books
+- Navigation menu
+- Form styling
+
+### 3. JavaScript Functionality (bookstore.js)
+- AJAX calls to REST APIs
+- Shopping cart management
+- Search functionality
+- Form validation
+- Dynamic content updates
+
+## Database Schema
+
+### Books Table
+```sql
+CREATE TABLE books (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    isbn VARCHAR(20) UNIQUE,
+    price DECIMAL(10,2) NOT NULL,
+    description TEXT,
+    stock_quantity INT DEFAULT 0
+);
+```
+
+### Orders Table
+```sql
+CREATE TABLE orders (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    customer_name VARCHAR(255) NOT NULL,
+    customer_email VARCHAR(255) NOT NULL,
+    customer_address TEXT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(10,2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING'
+);
+```
+
+### Order Items Table
+```sql
+CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT NOT NULL,
+    book_id BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (book_id) REFERENCES books(id)
+);
+```
+
+## Implementation Steps
+
+### Phase 1: Backend Setup
+1. Create Spring Boot project with required dependencies
+2. Configure H2 database
+3. Implement entity models
+4. Create repository interfaces
+5. Implement service classes
+6. Create REST controllers
+7. Add sample data initialization
+
+### Phase 2: Frontend Development
+1. Create HTML templates
+2. Implement CSS styling
+3. Develop JavaScript functionality
+4. Integrate with backend APIs
+5. Add form validation
+6. Implement responsive design
+
+### Phase 3: Integration & Testing
+1. Connect frontend to backend
+2. Test all user stories
+3. Handle error scenarios
+4. Optimize performance
+5. Add basic security measures
+
+## Sample Data
+Initialize the application with sample books:
+- "The Great Gatsby" by F. Scott Fitzgerald
+- "To Kill a Mockingbird" by Harper Lee
+- "1984" by George Orwell
+- "Pride and Prejudice" by Jane Austen
+- "The Catcher in the Rye" by J.D. Salinger
+
+## Configuration
+- H2 console enabled for development
+- CORS enabled for frontend-backend communication
+- Session-based cart management
+- Basic error handling and logging

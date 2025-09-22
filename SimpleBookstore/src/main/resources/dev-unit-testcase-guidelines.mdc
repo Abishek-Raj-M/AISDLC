@@ -1,0 +1,297 @@
+# Unit Test Case Guidelines - Simple Digital Bookstore
+
+## Overview
+This document provides comprehensive guidelines for developing unit test cases for the Simple Digital Bookstore web application. The tests will ensure code quality, functionality, and reliability across all application layers.
+
+## Testing Framework and Dependencies
+- **Testing Framework**: JUnit 5 (Jupiter)
+- **Mocking Framework**: Mockito
+- **Spring Boot Test**: @SpringBootTest, @WebMvcTest, @DataJpaTest
+- **Test Containers**: For integration testing (if needed)
+- **AssertJ**: For fluent assertions
+
+## Test Structure and Organization
+
+### Test Package Structure
+```
+src/test/java/com/bookstore/
+├── controller/
+│   ├── BookControllerTest.java
+│   ├── CartControllerTest.java
+│   └── OrderControllerTest.java
+├── service/
+│   ├── BookServiceTest.java
+│   ├── CartServiceTest.java
+│   └── OrderServiceTest.java
+├── repository/
+│   ├── BookRepositoryTest.java
+│   ├── CartItemRepositoryTest.java
+│   └── OrderRepositoryTest.java
+├── model/
+│   └── ModelValidationTest.java
+└── integration/
+    └── SimpleBookstoreIntegrationTest.java
+```
+
+## Unit Test Guidelines by Layer
+
+### 1. Controller Layer Tests (@WebMvcTest)
+
+#### BookControllerTest
+- **Test Scope**: REST endpoints and HTTP request/response handling
+- **Mock Dependencies**: BookService
+- **Test Cases**:
+  - GET /api/books - Should return all books
+  - GET /api/books/{id} - Should return specific book
+  - GET /api/books/{id} - Should return 404 for non-existent book
+  - GET /api/books/search?query={query} - Should return filtered books
+  - GET /api/books/available - Should return only available books
+  - POST /api/books - Should create new book (admin)
+  - PUT /api/books/{id} - Should update existing book
+  - DELETE /api/books/{id} - Should delete book
+  - Validate request/response JSON structure
+  - Test error handling and status codes
+
+#### CartControllerTest
+- **Test Scope**: Shopping cart REST endpoints
+- **Mock Dependencies**: CartService
+- **Test Cases**:
+  - GET /api/cart - Should return cart items for session
+  - POST /api/cart - Should add item to cart
+  - PUT /api/cart/{itemId} - Should update cart item quantity
+  - DELETE /api/cart/{itemId} - Should remove cart item
+  - DELETE /api/cart - Should clear entire cart
+  - GET /api/cart/total - Should return cart total
+  - Test session handling
+  - Validate cart operations with invalid data
+
+#### OrderControllerTest
+- **Test Scope**: Order processing REST endpoints
+- **Mock Dependencies**: OrderService
+- **Test Cases**:
+  - POST /api/orders - Should create order successfully
+  - POST /api/orders - Should handle empty cart error
+  - POST /api/orders - Should handle insufficient stock error
+  - GET /api/orders - Should return all orders
+  - GET /api/orders/{id} - Should return specific order
+  - GET /api/orders/customer/{email} - Should return customer orders
+  - GET /api/orders/status/{status} - Should return orders by status
+  - Validate order creation workflow
+
+### 2. Service Layer Tests (@ExtendWith(MockitoExtension.class))
+
+#### BookServiceTest
+- **Mock Dependencies**: BookRepository
+- **Test Cases**:
+  - getAllBooks() - Should return all books from repository
+  - getBookById() - Should return book when exists
+  - getBookById() - Should return empty when not exists
+  - searchBooks() - Should return filtered results
+  - searchBooks() - Should return all books for empty query
+  - getAvailableBooks() - Should return books with stock > 0
+  - saveBook() - Should save and return book
+  - deleteBook() - Should call repository delete
+  - updateStock() - Should reduce stock when sufficient
+  - updateStock() - Should return false when insufficient stock
+  - updateStock() - Should return false for non-existent book
+
+#### CartServiceTest
+- **Mock Dependencies**: CartItemRepository, BookService
+- **Test Cases**:
+  - getCartItems() - Should return items for session
+  - addToCart() - Should create new cart item
+  - addToCart() - Should update existing cart item quantity
+  - updateCartItem() - Should update quantity when item exists
+  - updateCartItem() - Should return null for non-existent item
+  - removeCartItem() - Should call repository delete
+  - clearCart() - Should remove all items for session
+  - calculateCartTotal() - Should calculate correct total
+  - calculateCartTotal() - Should handle non-existent books
+
+#### OrderServiceTest
+- **Mock Dependencies**: OrderRepository, CartService, BookService
+- **Test Cases**:
+  - createOrder() - Should create order with valid cart
+  - createOrder() - Should throw exception for empty cart
+  - createOrder() - Should throw exception for insufficient stock
+  - createOrder() - Should update book stock correctly
+  - createOrder() - Should clear cart after successful order
+  - getAllOrders() - Should return all orders
+  - getOrderById() - Should return order when exists
+  - getOrdersByCustomerEmail() - Should return customer orders
+  - getOrdersByStatus() - Should return orders by status
+
+### 3. Repository Layer Tests (@DataJpaTest)
+
+#### BookRepositoryTest
+- **Test Data**: Use @Sql scripts or @TestConfiguration
+- **Test Cases**:
+  - searchBooks() - Should find books by title (case insensitive)
+  - searchBooks() - Should find books by author (case insensitive)
+  - searchBooks() - Should return empty for no matches
+  - findByStockQuantityGreaterThan() - Should return available books
+  - save() - Should persist book with generated ID
+  - findById() - Should retrieve saved book
+  - delete() - Should remove book from database
+
+#### CartItemRepositoryTest
+- **Test Cases**:
+  - findBySessionId() - Should return items for specific session
+  - findBySessionIdAndBookId() - Should find specific cart item
+  - deleteBySessionId() - Should remove all session items
+  - save() - Should persist cart item
+  - Custom query performance tests
+
+#### OrderRepositoryTest
+- **Test Cases**:
+  - findByCustomerEmailOrderByOrderDateDesc() - Should return customer orders
+  - findByStatusOrderByOrderDateDesc() - Should return orders by status
+  - save() - Should persist order with order items
+  - Cascade operations test (Order -> OrderItems)
+
+### 4. Model/Entity Tests
+
+#### ModelValidationTest
+- **Test Cases**:
+  - Book validation - required fields, constraints
+  - CartItem validation - positive quantities
+  - Order validation - customer information requirements
+  - OrderItem validation - price and quantity constraints
+  - Entity relationships and mappings
+
+### 5. Integration Tests (@SpringBootTest)
+
+#### SimpleBookstoreIntegrationTest
+- **Test Scope**: End-to-end application flow
+- **Test Cases**:
+  - Complete book browsing workflow
+  - Complete shopping cart workflow
+  - Complete order placement workflow
+  - Database transaction rollback scenarios
+  - Application context loading
+  - Repository layer integration with service layer
+
+## Test Data Management
+
+### Test Data Strategy
+- Use `@Sql` annotations for repository tests
+- Create test data builders/factories for consistent test data
+- Use `@DirtiesContext` when needed to reset application context
+- Mock external dependencies consistently
+
+### Sample Test Data
+```java
+// Book test data
+Book testBook = Book.builder()
+    .title("Test Book")
+    .author("Test Author")
+    .isbn("123-456-789")
+    .price(19.99)
+    .description("Test Description")
+    .stockQuantity(10)
+    .build();
+
+// Cart item test data
+CartItem testCartItem = CartItem.builder()
+    .bookId(1L)
+    .quantity(2)
+    .sessionId("test-session")
+    .build();
+
+// Order test data
+Order testOrder = Order.builder()
+    .customerName("John Doe")
+    .customerEmail("john@example.com")
+    .customerAddress("123 Test St")
+    .totalAmount(39.98)
+    .build();
+```
+
+## Test Coverage Requirements
+
+### Minimum Coverage Targets
+- **Line Coverage**: 85%
+- **Branch Coverage**: 80%
+- **Method Coverage**: 90%
+
+### Critical Areas (100% Coverage Required)
+- Service layer business logic
+- Controller error handling
+- Repository custom queries
+- Order processing workflow
+
+## Test Execution Strategy
+
+### Unit Test Execution
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=BookServiceTest
+
+# Run tests with coverage
+mvn test jacoco:report
+
+# Run tests in specific package
+mvn test -Dtest=com.bookstore.service.*Test
+```
+
+### Continuous Integration
+- All tests must pass before merge
+- Coverage reports generated on each build
+- Failed tests block deployment
+- Performance regression tests for repository queries
+
+## Best Practices
+
+### Test Naming Convention
+- Method naming: `should{ExpectedBehavior}_when{StateUnderTest}`
+- Example: `shouldReturnBook_whenValidIdProvided()`
+- Example: `shouldThrowException_whenBookNotFound()`
+
+### Test Organization
+- Use `@DisplayName` for readable test descriptions
+- Group related tests using `@Nested` classes
+- Use `@ParameterizedTest` for multiple input scenarios
+- Follow AAA pattern: Arrange, Act, Assert
+
+### Mock Usage Guidelines
+- Mock external dependencies only
+- Verify interactions when behavior matters
+- Use `@MockBean` for Spring context tests
+- Use `@Mock` for pure unit tests
+
+### Assertion Best Practices
+- Use AssertJ for fluent assertions
+- Test both positive and negative scenarios
+- Verify complete object state when relevant
+- Use custom assertion methods for complex objects
+
+## Error Scenarios Testing
+
+### Exception Testing
+- Test all custom exception scenarios
+- Verify error messages and codes
+- Test exception propagation
+- Validate error responses in controllers
+
+### Edge Cases
+- Empty collections and null values
+- Boundary value testing (min/max quantities)
+- Concurrent access scenarios
+- Database constraint violations
+
+## Performance Testing Guidelines
+
+### Repository Performance
+- Test query execution time for large datasets
+- Verify N+1 query prevention
+- Test pagination performance
+- Monitor memory usage with large result sets
+
+### Service Layer Performance
+- Test service method execution time
+- Verify caching effectiveness (if implemented)
+- Test concurrent service calls
+- Monitor resource utilization
