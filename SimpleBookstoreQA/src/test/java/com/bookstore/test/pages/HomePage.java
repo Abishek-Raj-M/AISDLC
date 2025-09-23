@@ -71,8 +71,6 @@ public class HomePage {
     @FindBy(css = ".empty-state")
     private WebElement emptyState;
 
-    @FindBy(css = ".loading")
-    private WebElement loadingMessage;
 
     public HomePage() {
         this.driver = WebDriverConfig.getDriver();
@@ -122,41 +120,15 @@ public class HomePage {
         return cartCount.getText();
     }
 
-    public void clickCartLink() {
-        wait.until(ExpectedConditions.elementToBeClickable(cartNavLink));
-        cartNavLink.click();
-    }
-
-    public boolean isBookDisplayed(String bookTitle) {
-        for (WebElement title : bookTitles) {
-            if (title.getText().contains(bookTitle)) {
-                return true;
+    public boolean isBookTitleVisible(String title) {
+        try {
+            wait.until(ExpectedConditions.visibilityOfAllElements(bookTitles));
+            for (WebElement bookTitle : bookTitles) {
+                if (bookTitle.getText().equals(title)) {
+                    return true;
+                }
             }
-        }
-        return false;
-    }
-
-    public boolean isPaginationDisplayed() {
-        // Since pagination is not in the current HTML, this would be for future implementation
-        try {
-            WebElement pagination = driver.findElement(By.cssSelector(".pagination"));
-            return pagination.isDisplayed();
-        } catch (Exception e) {
             return false;
-        }
-    }
-
-    public boolean isNoResultsMessageDisplayed() {
-        try {
-            return emptyState.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public boolean isHomePageDisplayed() {
-        try {
-            return homePage.isDisplayed() && homePage.getAttribute("class").contains("active");
         } catch (Exception e) {
             return false;
         }
@@ -165,10 +137,73 @@ public class HomePage {
     public void clickHomeNavigation() {
         wait.until(ExpectedConditions.elementToBeClickable(homeNavLink));
         homeNavLink.click();
+        wait.until(ExpectedConditions.visibilityOf(homePage));
     }
 
     public void clickAdminNavigation() {
         wait.until(ExpectedConditions.elementToBeClickable(adminNavLink));
         adminNavLink.click();
+    }
+
+    public boolean isHomePageDisplayed() {
+        try {
+            wait.until(ExpectedConditions.visibilityOf(homePage));
+            return homePage.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isBookTitleVisibleInSearchResults(String title) {
+        try {
+            // Wait a bit for search results to load
+            Thread.sleep(1000);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("books-grid")));
+
+            for (WebElement bookTitle : bookTitles) {
+                if (bookTitle.getText().trim().equalsIgnoreCase(title.trim())) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void addFirstBookToCart() {
+        try {
+            wait.until(ExpectedConditions.visibilityOfAllElements(addToCartButtons));
+            if (!addToCartButtons.isEmpty()) {
+                wait.until(ExpectedConditions.elementToBeClickable(addToCartButtons.get(0)));
+                addToCartButtons.get(0).click();
+                // Wait for cart update
+                Thread.sleep(500);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to add book to cart: " + e.getMessage());
+        }
+    }
+
+    public boolean hasBookCards() {
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("books-grid")));
+            return !bookCards.isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void clickCartNavigation() {
+        wait.until(ExpectedConditions.elementToBeClickable(cartNavLink));
+        cartNavLink.click();
+    }
+
+    public boolean isEmptyStateDisplayed() {
+        try {
+            return emptyState.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

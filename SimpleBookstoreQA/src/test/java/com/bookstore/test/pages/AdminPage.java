@@ -28,53 +28,27 @@ public class AdminPage {
     @FindBy(id = "add-book-form")
     private WebElement addBookForm;
 
-    @FindBy(id = "book-title")
+    @FindBy(xpath = "//*[@id='book-title']")
     private WebElement bookTitleField;
 
-    @FindBy(id = "book-author")
+    @FindBy(xpath = "//*[@id='book-author']")
     private WebElement bookAuthorField;
 
-    @FindBy(id = "book-isbn")
+    @FindBy(xpath = "//*[@id='book-isbn']")
     private WebElement bookIsbnField;
 
-    @FindBy(id = "book-price")
+    @FindBy(xpath = "//*[@id='book-price']")
     private WebElement bookPriceField;
 
-    @FindBy(id = "book-description")
+    @FindBy(xpath = "//*[@id='book-description']")
     private WebElement bookDescriptionField;
 
-    @FindBy(id = "book-stock")
+    @FindBy(xpath = "//*[@id='book-stock']")
     private WebElement bookStockField;
-
-    // Form labels
-    @FindBy(css = "label[for='book-title']")
-    private WebElement titleLabel;
-
-    @FindBy(css = "label[for='book-author']")
-    private WebElement authorLabel;
-
-    @FindBy(css = "label[for='book-isbn']")
-    private WebElement isbnLabel;
-
-    @FindBy(css = "label[for='book-price']")
-    private WebElement priceLabel;
-
-    @FindBy(css = "label[for='book-description']")
-    private WebElement descriptionLabel;
-
-    @FindBy(css = "label[for='book-stock']")
-    private WebElement stockLabel;
 
     // Submit button
     @FindBy(css = "#add-book-form .btn-primary")
     private WebElement addBookButton;
-
-    // Success/Error messages
-    @FindBy(css = ".message.success")
-    private WebElement successMessage;
-
-    @FindBy(css = ".message.error")
-    private WebElement errorMessage;
 
     // Navigation
     @FindBy(css = ".nav-links a[onclick*=\"showPage('admin')\"]")
@@ -135,40 +109,6 @@ public class AdminPage {
         // Submit the form
         wait.until(ExpectedConditions.elementToBeClickable(addBookButton));
         addBookButton.click();
-    }
-
-    public boolean isSuccessMessageDisplayed() {
-        try {
-            wait.until(ExpectedConditions.visibilityOf(successMessage));
-            return successMessage.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public boolean isErrorMessageDisplayed() {
-        try {
-            wait.until(ExpectedConditions.visibilityOf(errorMessage));
-            return errorMessage.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String getSuccessMessage() {
-        try {
-            return successMessage.getText();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public String getErrorMessage() {
-        try {
-            return errorMessage.getText();
-        } catch (Exception e) {
-            return "";
-        }
     }
 
     public void clearForm() {

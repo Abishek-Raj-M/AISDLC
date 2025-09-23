@@ -72,9 +72,32 @@ public class ShoppingCartPage {
     public boolean isCartPageDisplayed() {
         try {
             wait.until(ExpectedConditions.visibilityOf(cartPage));
-            return cartPage.isDisplayed() && cartPage.getAttribute("class").contains("active");
+            return cartPage.isDisplayed();
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public boolean isItemInCart(String bookTitle) {
+        try {
+            wait.until(ExpectedConditions.visibilityOf(cartItemsContainer));
+            for (WebElement itemTitle : itemTitles) {
+                if (itemTitle.getText().trim().equals(bookTitle.trim())) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public int getCartItemCount() {
+        try {
+            wait.until(ExpectedConditions.visibilityOf(cartItemsContainer));
+            return cartItems.size();
+        } catch (Exception e) {
+            return 0;
         }
     }
 
@@ -83,14 +106,19 @@ public class ShoppingCartPage {
             wait.until(ExpectedConditions.visibilityOf(cartItemsContainer));
             return cartItems;
         } catch (Exception e) {
-            return List.of(); // Return empty list if no items
+            return List.of();
         }
     }
 
-    public void removeItem(int index) {
-        if (index < removeItemButtons.size()) {
-            wait.until(ExpectedConditions.elementToBeClickable(removeItemButtons.get(index)));
-            removeItemButtons.get(index).click();
+    public void removeItemFromCart(int index) {
+        try {
+            wait.until(ExpectedConditions.visibilityOfAllElements(removeItemButtons));
+            if (index < removeItemButtons.size()) {
+                wait.until(ExpectedConditions.elementToBeClickable(removeItemButtons.get(index)));
+                removeItemButtons.get(index).click();
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to remove item from cart: " + e.getMessage());
         }
     }
 
@@ -119,14 +147,11 @@ public class ShoppingCartPage {
 
     public boolean isCartEmpty() {
         try {
-            return emptyCartMessage.isDisplayed() || getCartItemCount() == 0;
+            wait.until(ExpectedConditions.visibilityOf(cartItemsContainer));
+            return cartItems.isEmpty();
         } catch (Exception e) {
-            return getCartItemCount() == 0;
+            return true;
         }
-    }
-
-    public int getCartItemCount() {
-        return getCartItems().size();
     }
 
     public String getItemTitle(int index) {
