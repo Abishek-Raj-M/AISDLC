@@ -1,5 +1,6 @@
 package com.bookstore.test.config;
 
+import com.epam.healenium.SelfHealingDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -16,7 +17,7 @@ import java.util.Properties;
 
 public class WebDriverConfig {
 
-    private static final ThreadLocal<WebDriver> driverThread = new ThreadLocal<>();
+    private static final ThreadLocal<SelfHealingDriver> driverThread = new ThreadLocal<>();
     private static final Properties properties = new Properties();
 
     static {
@@ -33,7 +34,7 @@ public class WebDriverConfig {
         }
     }
 
-    public static WebDriver getDriver() {
+    public static SelfHealingDriver getDriver() {
         return driverThread.get();
     }
 
@@ -41,7 +42,7 @@ public class WebDriverConfig {
         String browser = properties.getProperty("browser", "chrome");
         boolean headless = Boolean.parseBoolean(properties.getProperty("headless", "false"));
 
-        WebDriver driver;
+        WebDriver delegate;
 
         switch (browser.toLowerCase()) {
             case "chrome":
@@ -54,7 +55,7 @@ public class WebDriverConfig {
                 chromeOptions.addArguments("--disable-dev-shm-usage");
                 chromeOptions.addArguments("--disable-gpu");
                 chromeOptions.addArguments("--window-size=1920,1080");
-                driver = new ChromeDriver(chromeOptions);
+                delegate = new ChromeDriver(chromeOptions);
                 break;
 
             case "firefox":
@@ -63,7 +64,7 @@ public class WebDriverConfig {
                 if (headless) {
                     firefoxOptions.addArguments("--headless");
                 }
-                driver = new FirefoxDriver(firefoxOptions);
+                delegate = new FirefoxDriver(firefoxOptions);
                 break;
 
             case "edge":
@@ -72,21 +73,24 @@ public class WebDriverConfig {
                 if (headless) {
                     edgeOptions.addArguments("--headless");
                 }
-                driver = new EdgeDriver(edgeOptions);
+                delegate = new EdgeDriver(edgeOptions);
                 break;
 
             default:
                 throw new IllegalArgumentException("Browser not supported: " + browser);
         }
 
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
-        driverThread.set(driver);
+        delegate.manage().window().maximize();
+        delegate.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        delegate.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+
+        // Create Self-healing driver
+        SelfHealingDriver selfHealingDriver = SelfHealingDriver.create(delegate);
+        driverThread.set(selfHealingDriver);
     }
 
     public static void quitDriver() {
-        WebDriver driver = driverThread.get();
+        SelfHealingDriver driver = driverThread.get();
         if (driver != null) {
             driver.quit();
             driverThread.remove();
