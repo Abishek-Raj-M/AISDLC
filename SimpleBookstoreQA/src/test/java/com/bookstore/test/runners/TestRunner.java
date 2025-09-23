@@ -9,9 +9,9 @@ import org.testng.annotations.DataProvider;
     glue = {"com.bookstore.test.steps", "com.bookstore.test.hooks"},
     plugin = {
         "pretty",
-        "html:target/cucumber-reports.html",
-        "json:target/cucumber.json",
-        "testng:target/cucumber-testng.xml"
+        "html:target/cucumber-reports/cucumber.html",
+        "json:target/cucumber-reports/cucumber.json",
+        "junit:target/cucumber-reports/cucumber.xml",
     },
     monochrome = true,
     publish = false,

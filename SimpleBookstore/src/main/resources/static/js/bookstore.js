@@ -74,7 +74,7 @@ function displayBooks(books) {
 }
 
 async function searchBooks() {
-    const query = document.getElementById('search-input').value.trim();
+    const query = document.getElementById('search-bar').value.trim();
     try {
         showLoading('books-grid');
         const url = query ? `${API_BASE}/books/search?query=${encodeURIComponent(query)}` : `${API_BASE}/books`;
@@ -342,7 +342,7 @@ function showError(message) {
 }
 
 // Event Listeners
-document.getElementById('search-input').addEventListener('keypress', function(e) {
+document.getElementById('search-bar').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         searchBooks();
     }

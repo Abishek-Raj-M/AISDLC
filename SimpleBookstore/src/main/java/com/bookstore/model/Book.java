@@ -6,32 +6,30 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
-@Table(name = "books")
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     @NotBlank(message = "Title is required")
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     @NotBlank(message = "Author is required")
+    @Column(nullable = false)
     private String author;
 
     @Column(unique = true)
     private String isbn;
 
-    @Column(nullable = false)
     @NotNull(message = "Price is required")
+    @Column(nullable = false)
     private Double price;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "stock_quantity")
     @PositiveOrZero(message = "Stock quantity must be zero or positive")
     private Integer stockQuantity = 0;
 
