@@ -1,5 +1,6 @@
 package com.bookstore.test.steps;
 
+import com.bookstore.test.config.WebDriverConfig;
 import com.bookstore.test.pages.HomePage;
 import com.bookstore.test.pages.ShoppingCartPage;
 import io.cucumber.java.en.*;
@@ -24,12 +25,8 @@ public class HomePageSearchSteps {
     @When("I search for the book {string}")
     public void i_search_for_the_book(String bookTitle) {
         homePage.searchForBook(bookTitle);
-        // Wait a moment for search results to load
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Wait a moment for search results to load - use configurable wait
+        WebDriverConfig.mediumWait(); // Replaces Thread.sleep(1500)
     }
 
     @Then("I should see the book title {string} displayed in search results")

@@ -74,7 +74,7 @@ function displayBooks(books) {
 }
 
 async function searchBooks() {
-    const query = document.getElementById('search-bar').value.trim();
+    const query = document.getElementById('search-input').value.trim();
     try {
         showLoading('books-grid');
         const url = query ? `${API_BASE}/books/search?query=${encodeURIComponent(query)}` : `${API_BASE}/books`;

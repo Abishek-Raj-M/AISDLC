@@ -74,7 +74,7 @@ public class HomePage {
 
     public HomePage() {
         this.driver = WebDriverConfig.getDriver();
-        this.wait = WebDriverConfig.getWait(10);
+        this.wait = WebDriverConfig.getWait(); // Use configurable wait instead of hardcoded 10 seconds
         PageFactory.initElements(driver, this);
     }
 
@@ -156,8 +156,8 @@ public class HomePage {
 
     public boolean isBookTitleVisibleInSearchResults(String title) {
         try {
-            // Wait a bit for search results to load
-            Thread.sleep(1000);
+            // Wait a bit for search results to load - use configurable wait
+            WebDriverConfig.mediumWait(); // Replaces Thread.sleep(1000)
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("books-grid")));
 
             for (WebElement bookTitle : bookTitles) {
@@ -177,8 +177,8 @@ public class HomePage {
             if (!addToCartButtons.isEmpty()) {
                 wait.until(ExpectedConditions.elementToBeClickable(addToCartButtons.get(0)));
                 addToCartButtons.get(0).click();
-                // Wait for cart update
-                Thread.sleep(500);
+                // Wait for cart update - use configurable wait
+                WebDriverConfig.shortWait(); // Replaces Thread.sleep(500)
             }
         } catch (Exception e) {
             System.err.println("Failed to add book to cart: " + e.getMessage());

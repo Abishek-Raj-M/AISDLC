@@ -59,12 +59,8 @@ public class AddingBookSteps {
 
     @Then("I should see the book title {string} displayed on the home page")
     public void i_should_see_the_book_title_displayed_on_the_home_page(String title) {
-        // Wait a moment for the book to appear after adding
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Wait a moment for the book to appear after adding - use configurable wait
+        WebDriverConfig.longWait(); // Replaces Thread.sleep(2000)
 
         Assert.assertTrue(homePage.isBookTitleVisible(title),
             "Book title '" + title + "' is not visible on the home page");

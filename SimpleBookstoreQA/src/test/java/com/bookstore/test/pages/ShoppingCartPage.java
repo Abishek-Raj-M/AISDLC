@@ -65,7 +65,7 @@ public class ShoppingCartPage {
 
     public ShoppingCartPage() {
         this.driver = WebDriverConfig.getDriver();
-        this.wait = WebDriverConfig.getWait(10);
+        this.wait = WebDriverConfig.getWait(); // Use configurable wait instead of hardcoded value
         PageFactory.initElements(driver, this);
     }
 

@@ -81,8 +81,9 @@ public class WebDriverConfig {
         }
 
         delegate.manage().window().maximize();
-        delegate.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        delegate.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        // Use configurable timeouts from properties
+        delegate.manage().timeouts().implicitlyWait(Duration.ofSeconds(getImplicitWaitTimeout()));
+        delegate.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(getPageLoadTimeout()));
 
         // Create Self-healing driver
         SelfHealingDriver selfHealingDriver = SelfHealingDriver.create(delegate);
@@ -97,11 +98,69 @@ public class WebDriverConfig {
         }
     }
 
+    // Updated method to use configurable explicit wait timeout
+    public static WebDriverWait getWait() {
+        return new WebDriverWait(getDriver(), Duration.ofSeconds(getExplicitWaitTimeout()));
+    }
+
+    // Backward compatibility method
     public static WebDriverWait getWait(int timeoutInSeconds) {
         return new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutInSeconds));
     }
 
     public static String getBaseUrl() {
         return properties.getProperty("base.url", "http://localhost:8081");
+    }
+
+    // New methods to get configurable wait timeouts
+    public static int getImplicitWaitTimeout() {
+        return Integer.parseInt(properties.getProperty("implicit.wait", "10"));
+    }
+
+    public static int getExplicitWaitTimeout() {
+        return Integer.parseInt(properties.getProperty("explicit.wait", "15"));
+    }
+
+    public static int getPageLoadTimeout() {
+        return Integer.parseInt(properties.getProperty("page.load.timeout", "30"));
+    }
+
+    // Method to get configurable sleep duration (replaces Thread.sleep)
+    public static void waitForSeconds(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // Method to get configurable short wait (for quick waits)
+    public static void shortWait() {
+        int shortWaitMs = Integer.parseInt(properties.getProperty("short.wait.ms", "500"));
+        try {
+            Thread.sleep(shortWaitMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // Method to get configurable medium wait (for medium waits)
+    public static void mediumWait() {
+        int mediumWaitMs = Integer.parseInt(properties.getProperty("medium.wait.ms", "1500"));
+        try {
+            Thread.sleep(mediumWaitMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // Method to get configurable long wait (for long waits)
+    public static void longWait() {
+        int longWaitMs = Integer.parseInt(properties.getProperty("long.wait.ms", "2000"));
+        try {
+            Thread.sleep(longWaitMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
