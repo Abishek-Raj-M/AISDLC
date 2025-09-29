@@ -342,7 +342,7 @@ function showError(message) {
 }
 
 // Event Listeners
-document.getElementById('search-bar').addEventListener('keypress', function(e) {
+document.getElementById('search-input').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         searchBooks();
     }
