@@ -19,22 +19,8 @@ function showPage(pageId) {
         page.classList.remove('active');
     });
 
-    // Show selected page - handle special case for admin page
-    let targetId;
-    if (pageId === 'admin') {
-        targetId = 'admin-dashboard';
-    } else {
-        targetId = pageId + '-page';
-    }
-
-    document.getElementById(targetId).classList.add('active');
-
-    // Load data for specific pages
-    if (pageId === 'cart') {
-        loadCartItems();
-    }
-}
-
+    // Show selected page
+    document.getElementById(pageId + '-page').classList.add('active');
 // Book Management
 async function loadBooks() {
     try {
