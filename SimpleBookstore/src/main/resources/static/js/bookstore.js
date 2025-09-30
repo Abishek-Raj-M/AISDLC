@@ -31,7 +31,7 @@ function showPage(pageId) {
 // Book Management
 async function loadBooks() {
     try {
-        showLoading('books-grid');
+        showLoading('book-list-view');
         const response = await fetch(`${API_BASE}/books`);
         const books = await response.json();
         currentBooks = books;
@@ -43,7 +43,7 @@ async function loadBooks() {
 }
 
 function displayBooks(books) {
-    const booksGrid = document.getElementById('books-grid');
+    const booksGrid = document.getElementById('book-list-view');
 
     if (books.length === 0) {
         booksGrid.innerHTML = `
@@ -76,7 +76,7 @@ function displayBooks(books) {
 async function searchBooks() {
     const query = document.getElementById('search-input').value.trim();
     try {
-        showLoading('books-grid');
+        showLoading('book-list-view');
         const url = query ? `${API_BASE}/books/search?query=${encodeURIComponent(query)}` : `${API_BASE}/books`;
         const response = await fetch(url);
         const books = await response.json();
@@ -127,7 +127,7 @@ async function loadCartItems() {
 }
 
 async function displayCartItems() {
-    const cartItemsContainer = document.getElementById('cart-items');
+    const cartItemsContainer = document.getElementById('cart-item-list');
 
     if (cartItems.length === 0) {
         cartItemsContainer.innerHTML = `
@@ -206,8 +206,8 @@ async function removeCartItem(itemId) {
         });
 
         if (response.ok) {
-            loadCartItems();
             showSuccess('Item removed from cart');
+            loadCartItems();
         } else {
             showError('Failed to remove item');
         }
@@ -217,22 +217,21 @@ async function removeCartItem(itemId) {
     }
 }
 
-async function updateCartTotal() {
-    try {
-        const response = await fetch(`${API_BASE}/cart/total`);
-        const total = await response.json();
+function updateCartTotal() {
+    if (cartItems.length > 0) {
+        const total = cartItems.reduce((sum, item) => {
+            const book = currentBooks.find(b => b.id === item.bookId);
+            return sum + (book ? book.price * item.quantity : 0);
+        }, 0);
         document.getElementById('cart-total').textContent = total.toFixed(2);
-    } catch (error) {
-        console.error('Error updating cart total:', error);
     }
 }
 
 function updateCartCount() {
-    const count = cartItems.reduce((total, item) => total + item.quantity, 0);
+    const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     document.getElementById('cart-count').textContent = count;
 }
 
-// Checkout
 function showCheckout() {
     if (cartItems.length === 0) {
         showError('Your cart is empty');
@@ -257,13 +256,15 @@ async function placeOrder(event) {
             body: JSON.stringify({
                 customerName,
                 customerEmail,
-                customerAddress
+                customerAddress,
+                items: cartItems
             })
         });
 
         if (response.ok) {
-            const order = await response.json();
-            showSuccess(`Order placed successfully! Order ID: ${order.id}`);
+            showSuccess('Order placed successfully!');
+            // Clear cart
+            await fetch(`${API_BASE}/cart`, { method: 'DELETE' });
             document.getElementById('checkout-form').reset();
             cartItems = [];
             updateCartCount();
@@ -281,9 +282,9 @@ async function placeOrder(event) {
 async function addBook(event) {
     event.preventDefault();
 
-    const book = {
-        title: document.getElementById('book-title').value,
-        author: document.getElementById('book-author').value,
+    const bookData = {
+        title: document.getElementById('new-book-title').value,
+        author: document.getElementById('new-book-author').value,
         isbn: document.getElementById('book-isbn').value,
         price: parseFloat(document.getElementById('book-price').value),
         description: document.getElementById('book-description').value,
@@ -296,13 +297,13 @@ async function addBook(event) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(book)
+            body: JSON.stringify(bookData)
         });
 
         if (response.ok) {
-            showSuccess('Book added successfully');
-            document.getElementById('add-book-form').reset();
-            loadBooks();
+            showSuccess('Book added successfully!');
+            document.getElementById('book-entry-panel').reset();
+            loadBooks(); // Refresh the books list
         } else {
             showError('Failed to add book');
         }
@@ -321,27 +322,17 @@ function showLoading(elementId) {
     `;
 }
 
-function showMessage(message, type) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-    messageDiv.textContent = message;
-
-    document.body.appendChild(messageDiv);
-
-    setTimeout(() => {
-        messageDiv.remove();
-    }, 3000);
+function showError(message) {
+    // Simple error display - could be enhanced with a proper notification system
+    alert('Error: ' + message);
 }
 
 function showSuccess(message) {
-    showMessage(message, 'success');
+    // Simple success display - could be enhanced with a proper notification system
+    alert('Success: ' + message);
 }
 
-function showError(message) {
-    showMessage(message, 'error');
-}
-
-// Event Listeners
+// Enhanced search functionality
 document.getElementById('search-input').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         searchBooks();
