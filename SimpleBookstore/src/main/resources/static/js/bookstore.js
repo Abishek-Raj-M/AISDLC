@@ -1,5 +1,5 @@
 // API Base URL
-const API_BASE = '/api';
+const API_BASE = 'http://localhost:8081/api';
 
 // Global variables
 let currentBooks = [];
@@ -21,6 +21,8 @@ function showPage(pageId) {
 
     // Show selected page
     document.getElementById(pageId + '-page').classList.add('active');
+}
+
 // Book Management
 async function loadBooks() {
     try {
@@ -96,7 +98,8 @@ async function addToCart(bookId) {
 
         if (response.ok) {
             showSuccess('Book added to cart');
-            updateCartCount();
+            // Reload cart items from server to get updated data
+            await loadCartItems();
         } else {
             showError('Failed to add book to cart');
         }
