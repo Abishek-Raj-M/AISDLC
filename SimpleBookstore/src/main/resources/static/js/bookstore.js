@@ -31,7 +31,7 @@ function showPage(pageId) {
 // Book Management
 async function loadBooks() {
     try {
-        showLoading('book-list-view');
+        showLoading('books-grid');
         const response = await fetch(`${API_BASE}/books`);
         const books = await response.json();
         currentBooks = books;
@@ -43,7 +43,7 @@ async function loadBooks() {
 }
 
 function displayBooks(books) {
-    const booksGrid = document.getElementById('book-list-view');
+    const booksGrid = document.getElementById('books-grid');
 
     if (books.length === 0) {
         booksGrid.innerHTML = `
@@ -76,7 +76,7 @@ function displayBooks(books) {
 async function searchBooks() {
     const query = document.getElementById('search-input').value.trim();
     try {
-        showLoading('book-list-view');
+        showLoading('books-grid');
         const url = query ? `${API_BASE}/books/search?query=${encodeURIComponent(query)}` : `${API_BASE}/books`;
         const response = await fetch(url);
         const books = await response.json();

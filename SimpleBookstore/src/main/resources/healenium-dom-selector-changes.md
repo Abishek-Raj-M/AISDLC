@@ -6,7 +6,7 @@ This document tracks the controlled DOM ID refactor implemented for the Healeniu
 ## Implementation Details
 - **Date**: September 30, 2025
 - **Branch**: `feature/healenium-demo`
-- **Total Changes**: 7 DOM ID modifications
+- **Total Changes**: 5 DOM ID modifications (reduced from 7)
 - **Files Modified**: 3 files (HTML, JavaScript, CSS verified compatible)
 
 ## DOM Selector Mapping
@@ -29,16 +29,7 @@ This document tracks the controlled DOM ID refactor implemented for the Healeniu
   - `index.html` (line ~70)
   - `bookstore.js` (page navigation logic)
 
-### 3. Books Grid Container
-- **Original ID**: `books-grid`
-- **New ID**: `book-list-view`
-- **Element**: `<div id="book-list-view" class="books-grid">`
-- **Purpose**: Container for displaying the grid of available books
-- **Files Affected**: 
-  - `index.html` (line ~30)
-  - `bookstore.js` (loadBooks, displayBooks, searchBooks functions)
-
-### 4. Add Book Form
+### 3. Add Book Form
 - **Original ID**: `add-book-form`
 - **New ID**: `book-entry-panel`
 - **Element**: `<form id="book-entry-panel" onsubmit="addBook(event)">`
@@ -47,16 +38,7 @@ This document tracks the controlled DOM ID refactor implemented for the Healeniu
   - `index.html` (line ~80)
   - `bookstore.js` (addBook function)
 
-### 5. Home Page Container
-- **Original ID**: `home-page`
-- **New ID**: `homepage-container`
-- **Element**: `<div id="homepage-container" class="page active">`
-- **Purpose**: Main homepage container with book browsing interface
-- **Files Affected**: 
-  - `index.html` (line ~20)
-  - `bookstore.js` (page navigation logic)
-
-### 6. Book Title Input Field
+### 4. Book Title Input Field
 - **Original ID**: `book-title`
 - **New ID**: `new-book-title`
 - **Element**: `<input type="text" id="new-book-title" required>`
@@ -65,7 +47,7 @@ This document tracks the controlled DOM ID refactor implemented for the Healeniu
   - `index.html` (line ~85)
   - `bookstore.js` (addBook function)
 
-### 7. Book Author Input Field
+### 5. Book Author Input Field
 - **Original ID**: `book-author`
 - **New ID**: `new-book-author`
 - **Element**: `<input type="text" id="new-book-author" required>`
@@ -74,18 +56,27 @@ This document tracks the controlled DOM ID refactor implemented for the Healeniu
   - `index.html` (line ~90)
   - `bookstore.js` (addBook function)
 
+## Reverted Selectors
+The following selectors were reverted back to original due to Healenium compatibility issues:
+- `home-page` - Kept as original (was temporarily `homepage-container`)
+- `books-grid` - Kept as original (was temporarily `book-list-view`)
+
 ## JavaScript Function Updates
 
 ### Functions Modified
-1. **loadBooks()** - Updated to use `book-list-view`
-2. **displayBooks()** - Updated to use `book-list-view`
-3. **searchBooks()** - Updated to use `book-list-view`
-4. **displayCartItems()** - Updated to use `cart-item-list`
-5. **addBook()** - Updated to use `new-book-title` and `new-book-author`
-6. **showLoading()** - Updated to handle new container IDs
+1. **displayCartItems()** - Updated to use `cart-item-list`
+2. **addBook()** - Updated to use `new-book-title` and `new-book-author`
+
+### Functions Reverted
+1. **loadBooks()** - Reverted to use `books-grid`
+2. **displayBooks()** - Reverted to use `books-grid`
+3. **searchBooks()** - Reverted to use `books-grid`
+4. **showLoading()** - Reverted to handle original container IDs
 
 ### Unchanged Selectors
 The following selectors remained unchanged to maintain core functionality:
+- `home-page` - Homepage container (reverted)
+- `books-grid` - Books display grid (reverted)
 - `search-input` - Search box input field
 - `cart-count` - Cart item counter display
 - `cart-total` - Cart total price display
@@ -105,9 +96,9 @@ The following selectors remained unchanged to maintain core functionality:
 - **Backend Compatibility**: ✅ Spring Boot backend unaffected
 
 ## Git Commit Information
-- **Commit Hash**: 134c65f
-- **Commit Message**: "Refactor 7 DOM IDs for Healenium demo (HTML, JS, CSS updated)"
-- **Files Changed**: 2 files modified (39 insertions, 48 deletions)
+- **Commit Hash**: 134c65f (initial), ea4bb13 (documentation)
+- **Commit Message**: "Refactor 5 DOM IDs for Healenium demo (reduced from 7)"
+- **Files Changed**: 2 files modified
 
 ## Healenium Test Scenario
 This refactor creates the perfect scenario for demonstrating Healenium's capabilities:
@@ -123,31 +114,31 @@ This refactor creates the perfect scenario for demonstrating Healenium's capabil
 - Only internal DOM IDs changed for demonstration purposes
 - Application behavior and user experience unchanged
 - Backend API endpoints and data structures unmodified
+- **Update**: Reduced to 5 changes for better Healenium compatibility
 
 ## Quick Reference - Selector Mapping
 
-| # | Original Selector | New Selector | Element Type |
-|---|------------------|--------------|--------------|
-| 1 | `cart-items` | `cart-item-list` | Container (div) |
-| 2 | `admin-page` | `admin-dashboard` | Page Container (div) |
-| 3 | `books-grid` | `book-list-view` | Grid Container (div) |
-| 4 | `add-book-form` | `book-entry-panel` | Form Element |
-| 5 | `home-page` | `homepage-container` | Page Container (div) |
-| 6 | `book-title` | `new-book-title` | Input Field |
-| 7 | `book-author` | `new-book-author` | Input Field |
+| # | Original Selector | New Selector | Element Type | Status |
+|---|------------------|--------------|--------------|--------|
+| 1 | `cart-items` | `cart-item-list` | Container (div) | ✅ Changed |
+| 2 | `admin-page` | `admin-dashboard` | Page Container (div) | ✅ Changed |
+| 3 | `add-book-form` | `book-entry-panel` | Form Element | ✅ Changed |
+| 4 | `book-title` | `new-book-title` | Input Field | ✅ Changed |
+| 5 | `book-author` | `new-book-author` | Input Field | ✅ Changed |
+| ~~3~~ | ~~`books-grid`~~ | ~~`book-list-view`~~ | ~~Grid Container (div)~~ | ❌ Reverted |
+| ~~5~~ | ~~`home-page`~~ | ~~`homepage-container`~~ | ~~Page Container (div)~~ | ❌ Reverted |
 
 **Selenium Locator Examples:**
 ```java
-// Before (main branch)
-driver.findElement(By.id("cart-items"))
-driver.findElement(By.id("admin-page"))
-driver.findElement(By.id("books-grid"))
+// Changed selectors (will break and need healing)
+driver.findElement(By.id("cart-items"))        // → cart-item-list
+driver.findElement(By.id("admin-page"))        // → admin-dashboard
+driver.findElement(By.id("add-book-form"))     // → book-entry-panel
 
-// After (feature/healenium-demo branch)
-driver.findElement(By.id("cart-item-list"))
-driver.findElement(By.id("admin-dashboard"))
-driver.findElement(By.id("book-list-view"))
+// Unchanged selectors (will continue working)
+driver.findElement(By.id("home-page"))         // → home-page (unchanged)
+driver.findElement(By.id("books-grid"))        // → books-grid (unchanged)
 ```
 
 ---
-*Generated on September 30, 2025 for Healenium demonstration purposes*
+*Updated on September 30, 2025 - Reduced to 5 changes for optimal Healenium demonstration*
