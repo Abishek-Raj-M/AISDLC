@@ -1,6 +1,7 @@
 package com.bookstore.test.pages;
 
 import com.bookstore.test.config.WebDriverConfig;
+import com.bookstore.test.utils.AlertUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

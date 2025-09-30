@@ -55,6 +55,14 @@ public class WebDriverConfig {
                 chromeOptions.addArguments("--disable-dev-shm-usage");
                 chromeOptions.addArguments("--disable-gpu");
                 chromeOptions.addArguments("--window-size=1920,1080");
+                // Fix CDP warning by disabling logging and dev tools
+                chromeOptions.addArguments("--disable-logging");
+                chromeOptions.addArguments("--disable-dev-tools");
+                chromeOptions.addArguments("--log-level=3");
+                chromeOptions.addArguments("--silent");
+                // Set log level to suppress CDP warnings
+                System.setProperty("webdriver.chrome.logfile", "target/chromedriver.log");
+                System.setProperty("webdriver.chrome.verboseLogging", "false");
                 delegate = new ChromeDriver(chromeOptions);
                 break;
 
@@ -162,5 +170,15 @@ public class WebDriverConfig {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    // Method to get configurable alert wait timeout
+    public static int getAlertWaitTimeout() {
+        return Integer.parseInt(properties.getProperty("alert.wait", "5"));
+    }
+
+    // Method to get Healenium specific wait timeout
+    public static int getHealeniumWaitTimeout() {
+        return Integer.parseInt(properties.getProperty("healenium.wait", "2"));
     }
 }

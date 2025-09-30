@@ -3,6 +3,7 @@ package com.bookstore.test.steps;
 import com.bookstore.test.pages.AdminPage;
 import com.bookstore.test.pages.HomePage;
 import com.bookstore.test.config.WebDriverConfig;
+import com.bookstore.test.utils.AlertUtils;
 import io.cucumber.java.en.*;
 import io.cucumber.datatable.DataTable;
 import org.testng.Assert;
@@ -53,6 +54,10 @@ public class AddingBookSteps {
 
     @When("I navigate to the home page")
     public void i_navigate_to_the_home_page() {
+        // Handle any alert that might appear before navigation
+        AlertUtils.handleAlertIfPresent();
+
+        // Now proceed with navigation
         homePage.clickHomeNavigation();
         Assert.assertTrue(homePage.isHomePageDisplayed(), "Home page is not displayed");
     }
